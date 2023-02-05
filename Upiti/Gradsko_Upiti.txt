@@ -1,0 +1,47 @@
+GRADSKO SAOBRACAJNO PREDUZECE!
+Претраживање базе
+--Задатак 1: Приказати податке о резервним деловима који су потребни за
+сервисну услугу “замена зупчастог каиша”.
+select rezervni_deo.sifraRezDela, rezervni_deo.nazivRezDela,
+potrebnaaKol, servisna_usluga.nazivUsluge
+from rezervni_deo inner join potrebni_deo
+on rezervni_deo.sifraRezDela = potrebni_deo.sifraRezDela
+inner join servisna_usluga
+on potrebni_deo.sifraUsluge = servisna_usluga.sifraUsluge
+where servisna_usluga.nazivUsluge = 'zam zupcastog kaisa';
+
+--Задатак 2: Приказати податке о свим сервисима који су извшени над
+аутобусом број 405 у 2015. години. Такође приказати податке о
+аутомеханичарима који су урадили сервисе.
+select servisna_usluga.sifraUsluge, servisna_usluga.nazivUsluge,
+uradjeno.datum,
+uradjeno.registarskiBroj, automehanicar.ime, automehanicar.prezime,
+automehanicar.strucnaSpr
+from servisna_usluga
+inner join uradjeno
+on servisna_usluga.sifraUsluge = uradjeno.sifraUsluge
+inner join automehanicar
+on uradjeno.maticniBrAutomeh = automehanicar.maticniBrAutomeh
+where registarskiBroj = 405 and year(datum) = 2015;
+
+--Задатак 3: Приказати податке о возачима и аутобусима који сутра треба да
+изађу да врше превоз путника.
+select datumRasp, ime, prezime, vozac.kategorija, adresa,
+autobus.registarskiBroj, tip, ativan from vozac
+inner join autobus
+on vozac.registarskiBroj = autobus.registarskiBroj
+where year(datumRasp) = year(getdate()) and month(datumRasp) >=
+month(getdate()) and day(datumRasp) = day(getdate())+1;
+
+
+Ажурирање базе
+--Задатак 1: Пребацити аутобус 405 са линије 65Л на линију 3.
+update autobus set sifraLinije = '3' where sifraLinije = '65L' and
+registarskiBroj = 405;
+
+--Задатак 2: У свим подацима о сервисима које је радио Драган Јанковић
+заменити име аутомеханичара у Зоран Крстић.
+update automehanicar set ime = 'Zoran', prezime = 'Krstic'
+where ime = 'Dragan' and prezime = 'Jankovic';
+Задатак 3: Обрисати податке о аутомеханичару Драгану Јанковићу.
+delete automehanicar where ime = 'Dragan' and prezime = 'Jankovic';

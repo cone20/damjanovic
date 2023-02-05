@@ -1,0 +1,69 @@
+APOTEKA!
+Претраживање базе
+--Задатак 1: Приказати податке о веледрогеријама које су испоручиле лекове
+15. децембра 2017. год.
+select distinct VELEDROGERIJA.SifraV, VELEDROGERIJA.NazivV,
+VELEDROGERIJA.AdresaV, VELEDROGERIJA.TelefonV, DOKUMENT.DatumI
+from DOKUMENT inner join VELEDROGERIJA
+on DOKUMENT.SifraV = VELEDROGERIJA.SifraV
+where DOKUMENT.DatumI = '2017-12-15';
+
+--Задатак 2: Пронаћи све апотеке којима је дана 15. децембра 2017. год.
+испоручен лек „Фабрицет“.
+select ISPORUCENO.SifraA, APOTEKA.NazivA, LEK.NazivL,
+DOKUMENT.DatumI
+from DOKUMENT
+inner join ISPORUCENO
+on DOKUMENT.SifraD = ISPORUCENO.SifraD
+inner join APOTEKA
+on APOTEKA.SifraA = ISPORUCENO.SifraA
+inner join LEK
+on LEK.SifraL = ISPORUCENO.SifraL
+where LEK.NazivL = 'Fabricet' and DOKUMENT.DatumI = '2017-12-15';
+
+--Задатак 3: Приказати податке о фармацеутима који раде у апотекама којима
+је веледрогерија „Хемофарм“ у задњих 10 дана испоручивала неки лек.
+select distinct RADNIK.Ime, RADNIK.Prezime, RADNIK.AdresaR,
+FARMACEUT.StrucnaS
+from VELEDROGERIJA
+inner join DOKUMENT
+on VELEDROGERIJA.SifraV = DOKUMENT.SifraV
+inner join ISPORUCENO
+on DOKUMENT.SifraD = ISPORUCENO.SifraD
+inner join APOTEKA
+on ISPORUCENO.SifraA = APOTEKA.SifraA
+inner join ZAPOSLEN
+on APOTEKA.SifraA = ZAPOSLEN.SifraA
+inner join FARMACEUT
+on ZAPOSLEN.MbrojF = FARMACEUT.MbrojF
+inner join RADNIK
+on FARMACEUT.MbrojF = RADNIK.Mbroj
+where VELEDROGERIJA.NazivV = 'Hemofarm' and DOKUMENT.DatumI >=
+DATEADD(day,-10, GETDATE());
+
+
+Ажурирање базе
+--Задатак 1: Додати у бази да замена за лек „Фабрицет“ може бити лек
+„Парацетамол“.
+select SifraL, NazivL, SifraLZ from LEK
+inner join ZAMENA
+on LEK.SifraL = ZAMENA.SifraLO
+where NazivL = 'Fabricet' OR NazivL = 'Paracetamol'
+update zamena
+set SifraLZ = 235
+where SifraLO = 234 and SifraLZ = 239;
+
+--Задатак 2: За веледрогерију „Галеника“ повећати рок плаћања на 90 дана.
+update DOKUMENT
+set DOKUMENT.Rok = 90
+from DOKUMENT
+inner join VELEDROGERIJA
+on DOKUMENT.SifraV = VELEDROGERIJA.SifraV
+where VELEDROGERIJA.NazivV = 'Galenika';
+
+--Задатак 3: Обрисати податке о фармацеутима који су били запослени у
+апотеци „Дона“ у периоду од 15. октобра 2016. год. до 15. децембра 2016. год.
+delete from radnik where Mbroj
+in (select farmaceut.MbrojF from farmaceut where MbrojF
+in (select ZAPOSLEN.MbrojF from ZAPOSLEN where RanijeZU = 'Dona'
+and zaposen.Datum between '2016-10-15' and '2016-12-15')) 

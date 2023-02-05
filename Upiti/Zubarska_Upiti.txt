@@ -1,0 +1,44 @@
+ZUBARSKA ORDINACIJA!
+Претраживање базе
+--Задатак 1. Наћи све материјале које испоручује добављач Галеника а чија је
+вредност мања од 10.000 дин.
+select narudzbenica.sifraDob, imeDob,cenaMat, nazivMat
+from dobavljac inner join narudzbenica
+on dobavljac.sifraDob = narudzbenica.sifraDob
+inner join materijal on materijal.sifraMat = narudzbenica.sifraMat
+where imeDob = 'Galenika' AND cenaMat < 10000;
+
+--Задатак 2. Приказати податке свих пацијената који су имали рачун већи од
+5500 дин.
+select ime, prezime, telefon, racun.jmbgKli, usluge.cena
+from klijent inner join racun on klijent.jmbgKli = racun.jmbgKli
+inner join intervencija on racun.brInt = intervencija.brInt
+inner join usluge on intervencija.sifraUsluge = usluge.sifraUsluge
+where usluge.cena > 5500;
+
+--Задатак 3. Приказати податке пацијената који су прегледани 25.12.2017. год.
+од стране доктора „Јована Петровића”.
+select klijent.ime, klijent.prezime, klijent.telefon,
+klijent.adresaStan, klijent.jmbgKli, CONCAT(zaposlen.ime,' ',
+zaposlen.prezime) as Doktor
+from zaposlen inner join doktor
+on doktor.jmbg = zaposlen.jmbg inner join izvrseniPreg
+on izvrseniPreg.jmbg = doktor.jmbg inner join intervencija
+on intervencija.brPregleda = izvrseniPreg.brPregleda inner join
+racun on racun.brInt = intervencija.brInt inner join klijent
+on racun.jmbgKli = klijent.jmbgKli
+where izvrseniPreg.datum = '25.12.2017. god.';
+
+
+Ажурирање базе
+--Задатак 1. Обрисати податке о свим клијентима чији телефонски број
+почиње са 069.
+DELETE FROM klijent WHERE telefon LIKE '069%';
+
+--Задатак 2. Изменити податке о добављачу Галеника. Уместо Галенике
+променити добављача у Новартис.
+UPDATE dobavljac SET imeDob = 'Novartis' WHERE imeDob = 'Galenika';
+
+--Задатак 3. Обрисати податке о свим интервенцијама заказаним за 18.02.2018.
+год.
+DELETE FROM zakazaniPreg WHERE datum = '18.02.2018. god.';

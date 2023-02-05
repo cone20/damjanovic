@@ -1,0 +1,50 @@
+GRADJEVINSKO PREDUZECE!
+Претраживање базе
+--Задатак 1: Пронаћи све раднике који су обучени за рад на машини “Багер”.
+select ime, prezime, tip_masine.naziv
+from radnik inner join obucen
+on radnik.[maticni broj] = obucen.[maticni broj]
+inner join tip_masine
+on obucen.[id tip] = tip_masine.[id tip]
+where tip_masine.naziv = 'Bager';
+
+--Задатак 2: Приказати све шефове градилишта на којима је била ангажована
+машина “Грејдер”.
+select gradiliste.[sef gradilista], gradiliste.naziv
+from gradiliste inner join mas_angazovan
+on gradiliste.sifra = mas_angazovan.sifra
+inner join masina
+on mas_angazovan.[registracioni broj] =
+masina.[registracioni broj]
+where masina.naziv = 'Grejder';
+
+--Задатак 3: Приказати све грађевинске машине које треба ангажовати на свим
+градилиштима дана 15. марта 2018. год.
+select masina.naziv, masina.[registracioni broj]
+from gradiliste inner join mas_angazovan
+on gradiliste.sifra = mas_angazovan.sifra
+inner join masina
+on mas_angazovan.[registracioni broj]=
+masina.[registracioni broj]
+where '2018-03-15' between gradiliste.[datum pocetka radova] and
+gradiliste.[rok zavrsetka radova]
+
+
+Ажурирање базе
+--Задатак 1: Обрисати сва забележена ангажовања грађевинских машина на
+градилишту под шифром 435.
+delete from mas_angazovan where mas_angazovan.sifra = 435;
+
+--Задатак 2: За тип машине “Грејдер”, време монтаже поставити на 3 на дана.
+update tip_masine set tip_masine.[vreme montaze] = 3
+where tip_masine.naziv = 'Grejder';
+--Задатак 3: За сва градилишта где је шеф Јовановић Петар, смањити време
+планираног ангажовања грађевинских машина за 1 дан.
+
+update mas_angazovan
+set mas_angazovan.[trajanje angazmana] =
+mas_angazovan.[trajanje angazmana] - 1
+from gradiliste
+inner join mas_angazovan
+on gradiliste.sifra = mas_angazovan.sifra
+where gradiliste.[sef gradilista] = 'Jovanovic Petar';

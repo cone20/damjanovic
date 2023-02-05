@@ -1,0 +1,53 @@
+GALERIJA SLIKA!
+Претраживање базе
+--Задатак 1. Наћи све слике које су насликане у периоду од 1845. год. до 1905.
+год. које су насликане у пастелној техници.
+select Slika.nazivS, Slika.godinaS, Tehnika.naziv
+from Slika
+inner join DeoSlike on Slika.idSlike = DeoSlike.slika
+inner join Tehnika on Tehnika.IDTehnike = DeoSlike.tehnika
+where godinaS > 1844 and godinaS < 1905 and
+Tehnika.naziv = 'pastel';
+
+--Задатак 2. Приказати све слике сликара Леонарда Да Винчија које су биле
+изложене у галерији Москва од 12.03.2012. год. до 15.06.2015. год.
+select Slika.nazivS, Slika.GodinaS, Slikar.Ime, Slikar.Prezime,
+Galerija.naziv, Izlozene_Slike.izlozenaOd,
+Izlozene_Slike.izlozenaDo
+from Galerija
+inner join Izlozene_Slike on Galerija.RedniBr =
+Izlozene_Slike.Galerija
+inner join Slika on Izlozene_Slike.Slika = Slika.idSlike
+inner join Slikar on Slikar.idSlikara = Slika.idSlikara
+where Izlozene_Slike.izlozenaOd > '2012/03/12' and
+Izlozene_Slike.izlozenaDo < '2015/06/15' and Slikar.ime =
+'Leonardo' and Slikar.prezime = 'Da Vinci';
+
+--Задатак 3. Приказати податке о техникама којима су сликане слике које су
+биле изложене у галеријама у Новом Саду.
+select Slika.nazivS, DeoSlike.tehnika, Tehnika.naziv, Mesto.naziv
+from Tehnika
+inner join DeoSlike on Tehnika.idTehnike = DeoSlike.tehnika
+inner join Slika on DeoSlike.slika = Slika.idSlike
+inner join Izlozene_Slike on Slika.idSlike = Izlozene_Slike.Slika
+inner join Galerija on Galerija.RedniBr = Izlozene_Slike.Galerija
+inner join Mesto on Mesto.PTT = Galerija.PTT
+where Mesto.naziv = 'Novi Sad';
+
+
+Ажурирање базе
+--Задатак 1. Изменити податке о месту галерије Москва. Галерија Москва је
+била у Београду а сада је измештена у Панчеву.
+update Galerija
+set Mesto = (select Ptt from Mesto where Naziv = 'Pancevo')
+85
+where Mesto = (select Ptt from Mesto where Naziv = 'Beograd') and
+Galerija.naziv = 'Moskva';
+--Задатак 2. Измените податке о власнику Галерије Москва. Нови власник је
+Александар Јанковић.
+update Galerija
+set Vlasnik = (select IdVlasnika from Vlasnik where ImeiPrezime =
+'Aleksandar Jankovic')
+from Vlasnik inner join Galerija
+on Vlasnik.idVlasnika = Galerija.Vlasnik
+where Galerija.naziv = 'Moskva';
